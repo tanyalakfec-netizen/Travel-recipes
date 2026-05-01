@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#1d5954"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>TripWallet ✈️</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sand:#f4ede3;--cream:#fdfaf5;--gold:#c9a84c;--gold-lt:#e8c97a;--gold-pale:#fef9ec;
+  --teal:#2a7c76;--teal-dk:#1d5954;--teal-lt:#dff0ee;--teal-mid:#3a9990;
+  --rust:#c0533a;--rust-lt:#fdecea;--green:#27946a;--green-lt:#e4f5ed;
+  --text:#2c2416;--muted:#7a6e5f;--card:#fff;--border:#e8dfd0;--blt:#f0e8dc;
+  --sh:0 4px 24px rgba(44,36,22,.09);--shsm:0 2px 8px rgba(44,36,22,.06);--shlg:0 12px 40px rgba(44,36,22,.15);
+  --r:16px;--rs:10px;
+}
+html,body,#root{height:100%;background:var(--sand);font-family:'Sarabun',sans-serif;color:var(--text)}
+.app{max-width:430px;margin:0 auto;min-height:100dvh;display:flex;flex-direction:column;background:var(--cream)}
+.auth-bg{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,#0e3835 0%,var(--teal-dk) 40%,var(--teal-mid) 100%);padding:28px 20px;position:relative;overflow:hidden}
+.auth-bg::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(255,255,255,.015) 40px,rgba(255,255,255,.015) 80px)}
+.auth-logo{font-family:'Playfair Display',serif;font-size:40px;color:#fff;letter-spacing:-1px;text-align:center;position:relative;z-index:1}
+.auth-logo span{color:var(--gold-lt)}
+.auth-sub{color:rgba(255,255,255,.55);font-size:13px;margin-top:6px;text-align:center;letter-spacing:.6px;position:relative;z-index:1}
+.auth-card{background:var(--cream);border-radius:22px;padding:26px 22px;width:100%;max-width:370px;margin-top:26px;box-shadow:0 20px 60px rgba(0,0,0,.3);position:relative;z-index:1}
+.atabs{display:flex;background:var(--sand);border-radius:10px;padding:3px;margin-bottom:20px}
+.atab{flex:1;padding:9px;border:none;background:transparent;font-family:'Sarabun',sans-serif;font-size:14px;font-weight:700;color:var(--muted);border-radius:8px;cursor:pointer;transition:all .2s}
+.atab.on{background:var(--teal);color:#fff;box-shadow:0 2px 10px rgba(42,124,118,.3)}
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:13px}
+.field label{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.7px;text-transform:uppercase}
+.field input,.field select,.field textarea{padding:12px 13px;border:1.5px solid var(--border);border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:15px;color:var(--text);background:#fff;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(42,124,118,.1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:12px 18px;border:none;border-radius:var(--rs);font-family:'Sarabun',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:active{background:var(--teal-dk)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8933e);color:#fff}
+.btn-green{background:var(--green);color:#fff}
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--border)}
+.btn-danger{background:var(--rust);color:#fff}
+.btn-blue{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff}
+.btn-sm{padding:7px 12px;font-size:12px;border-radius:8px}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px}
+.btn-full{width:100%}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.hdr{background:var(--teal);color:#fff;padding:12px 15px;display:flex;align-items:center;gap:9px;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(29,89,84,.3)}
+.hdr-back{background:rgba(255,255,255,.15);border:none;color:#fff;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;flex-shrink:0}
+.hdr-title{flex:1;font-family:'Playfair Display',serif;font-size:19px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hdr-av{width:36px;height:36px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;cursor:pointer;flex-shrink:0}
+.scroll{flex:1;overflow-y:auto;padding-bottom:104px}
+.scroll::-webkit-scrollbar{width:0}
+.hero{background:linear-gradient(140deg,var(--teal-dk) 0%,var(--teal-mid) 100%);padding:20px 16px 24px;color:#fff;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;background:rgba(255,255,255,.06);border-radius:50%}
+.h-greet{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:3px}
+.h-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:16px}
+.h-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;position:relative;z-index:1}
+.h-stat{background:rgba(255,255,255,.1);border-radius:12px;padding:12px 13px}
+.h-lbl{font-size:10px;color:rgba(255,255,255,.55);letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+.h-val{font-size:21px;font-weight:800;color:var(--gold-lt)}
+.h-sub{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
+.stitle{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.9px;text-transform:uppercase;padding:16px 14px 7px;display:flex;align-items:center;justify-content:space-between}
+.tc{margin:0 13px 10px;background:var(--card);border-radius:var(--r);padding:14px;box-shadow:var(--shsm);border:1.5px solid var(--border);cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.tc::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--teal);border-radius:4px 0 0 4px}
+.tc.closed::before{background:var(--muted)}
+.tc-top{display:flex;gap:11px;align-items:flex-start}
+.tc-icon{width:44px;height:44px;background:var(--teal-lt);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.tc-info{flex:1}
+.tc-name{font-weight:800;font-size:15px;margin-bottom:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:800}
+.ch-teal{background:var(--teal-lt);color:var(--teal-dk)}
+.ch-grey{background:#f0ece8;color:var(--muted)}
+.tc-date{font-size:11px;color:var(--muted)}
+.tc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:11px;padding-top:9px;border-top:1px solid var(--blt)}
+.tc-meta{font-size:11px;color:var(--muted)}
+.tc-amt{font-size:16px;font-weight:800;color:var(--teal-dk)}
+.empty{text-align:center;padding:40px 28px;color:var(--muted)}
+.empty-ic{font-size:50px;margin-bottom:11px}
+.empty h3{font-size:16px;font-weight:700;color:var(--text);margin-bottom:5px}
+.empty p{font-size:13px;line-height:1.7}
+.fab{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:10px 13px 20px;background:linear-gradient(to top,var(--cream) 65%,transparent);z-index:80;display:flex;gap:8px}
+.fab-btn{flex:1;padding:14px 8px;border-radius:13px;font-size:13px;font-weight:700;border:none;cursor:pointer;font-family:'Sarabun',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 6px 20px rgba(0,0,0,.17);transition:all .18s}
+.fab-c{background:var(--teal);color:#fff}
+.fab-j{background:linear-gradient(135deg,var(--gold),#b8933e);color:#fff}
+.fab-e{background:var(--teal);color:#fff;flex:2}
+.fab-i{background:var(--green);color:#fff}
+.sc{margin:13px;background:linear-gradient(135deg,var(--teal-dk) 0%,var(--teal) 100%);border-radius:var(--r);padding:17px;color:#fff;box-shadow:var(--sh)}
+.sc-lbl{font-size:10px;color:rgba(255,255,255,.6);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px}
+.sc-val{font-family:'Playfair Display',serif;font-size:34px;font-weight:700}
+.sc-cur{font-size:15px;font-weight:400;color:rgba(255,255,255,.55);margin-left:5px}
+.sc-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:13px;padding-top:13px;border-top:1px solid rgba(255,255,255,.15)}
+.sc-item{text-align:center}
+.sc-iv{font-size:16px;font-weight:800;color:var(--gold-lt)}
+.sc-il{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
+.tabbar{display:flex;background:var(--sand);border-radius:12px;padding:3px;margin:0 13px 2px}
+.tabbtn{flex:1;padding:9px;border:none;background:transparent;font-family:'Sarabun',sans-serif;font-size:12px;font-weight:700;color:var(--muted);border-radius:10px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:5px}
+.tabbtn.on{background:#fff;color:var(--text);box-shadow:var(--shsm)}
+.codebar{margin:10px 13px 0;display:flex;gap:8px;align-items:center}
+.codebox{flex:1;display:flex;align-items:center;gap:10px;background:var(--gold-pale);border:1.5px dashed var(--gold);border-radius:10px;padding:8px 12px}
+.code-lbl{font-size:9px;font-weight:800;color:var(--gold);letter-spacing:.5px;text-transform:uppercase}
+.code-val{font-size:19px;font-weight:800;letter-spacing:4px;color:var(--text)}
+.notice{margin:0 13px 11px;padding:10px 13px;border-radius:10px;font-size:13px;line-height:1.55;border-left:3px solid}
+.n-teal{background:var(--teal-lt);color:var(--teal-dk);border-color:var(--teal)}
+.n-warn{background:var(--gold-pale);color:#7a5c1a;border-color:var(--gold)}
+.n-success{background:var(--green-lt);color:#1a5a38;border-color:var(--green)}
+.n-danger{background:var(--rust-lt);color:#7a2a1a;border-color:var(--rust)}
+.bal{margin:0 13px 8px;background:var(--card);border-radius:12px;padding:12px 13px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:9px}
+.bal-l{display:flex;align-items:center;gap:8px}
+.bal-n{font-size:13px;font-weight:700}
+.bal-r{text-align:right}
+.bal-p{font-size:14px;font-weight:800;color:var(--teal)}
+.bal-s{font-size:10px;color:var(--muted)}
+.bal-pos{font-size:12px;font-weight:800;color:var(--green)}
+.bal-neg{font-size:12px;font-weight:800;color:var(--rust)}
+.settle{margin:0 13px 8px;display:flex;align-items:center;gap:8px;background:var(--gold-pale);border:1.5px solid #e8d8a0;border-radius:12px;padding:11px 13px;font-size:13px;font-weight:600}
+.mwrap{display:flex;gap:7px;padding:0 13px;flex-wrap:wrap;margin-bottom:4px}
+.mchip{display:flex;align-items:center;gap:6px;background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:5px 11px 5px 6px}
+.mchip.me{border-color:var(--teal);background:var(--teal-lt)}
+.mav{width:26px;height:26px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
+.mchip.me .mav{background:var(--teal-dk)}
+.mname{font-size:12px;font-weight:700}
+.inc-card{margin:0 13px 9px;background:linear-gradient(135deg,var(--green-lt),#d0f0e2);border-radius:12px;padding:12px;border:1.5px solid #b4e4cc;display:flex;gap:11px;align-items:center}
+.inc-icon{width:38px;height:38px;background:var(--green);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.inc-info{flex:1;min-width:0}
+.inc-title{font-weight:700;font-size:14px;color:#1a5c36;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inc-meta{font-size:11px;color:#3a8057}
+.inc-amt{font-size:15px;font-weight:800;color:var(--green)}
+.expitem{margin:0 13px 8px;background:var(--card);border-radius:12px;padding:12px;box-shadow:var(--shsm);border:1.5px solid var(--border);display:flex;gap:10px;align-items:flex-start}
+.exp-ic{width:40px;height:40px;background:var(--sand);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.exp-bd{flex:1;min-width:0}
+.exp-tt{font-weight:700;font-size:14px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exp-mt{font-size:11px;color:var(--muted)}
+.exp-rg{text-align:right;flex-shrink:0}
+.exp-am{font-size:15px;font-weight:800;color:var(--rust)}
+.exp-pb{font-size:10px;color:var(--muted);margin-top:1px}
+.catgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.catbtn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 5px;background:var(--sand);border:2px solid transparent;border-radius:12px;cursor:pointer;transition:all .15s}
+.catbtn.on{background:var(--teal-lt);border-color:var(--teal)}
+.catbtn-ic{font-size:24px}
+.catbtn-lb{font-size:10px;font-weight:700;color:var(--muted)}
+.catbtn.on .catbtn-lb{color:var(--teal-dk)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fi .2s}
+@keyframes fi{from{opacity:0}to{opacity:1}}
+.sheet{background:var(--cream);border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:16px 17px 34px;max-height:93dvh;overflow-y:auto;animation:su .25s cubic-bezier(.22,1,.36,1)}
+.sheet::-webkit-scrollbar{width:0}
+@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.sh-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 15px}
+.sh-title{font-family:'Playfair Display',serif;font-size:21px;font-weight:700;margin-bottom:15px;color:var(--teal-dk)}
+.rcpt{background:#fff;border-radius:14px;border:1.5px solid var(--border);overflow:hidden;margin-bottom:14px}
+.rcpt-hdr{background:linear-gradient(135deg,var(--teal-dk),var(--teal));padding:18px;text-align:center;color:#fff}
+.rcpt-t{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:4px}
+.rcpt-m{font-size:11px;color:rgba(255,255,255,.65)}
+.rcpt-sec{padding:13px 15px;border-bottom:1px solid var(--blt)}
+.rcpt-sec:last-child{border-bottom:none}
+.rcpt-stitle{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.7px;text-transform:uppercase;margin-bottom:9px}
+.rcpt-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:13px;border-bottom:1px solid var(--blt)}
+.rcpt-row:last-child{border-bottom:none}
+.rcpt-rl{color:var(--muted);flex:1}
+.rcpt-rv{font-weight:700;color:var(--text)}
+.rcpt-tot{display:flex;justify-content:space-between;font-size:15px;font-weight:800;padding:8px 0;border-top:2px solid var(--border);margin-top:4px;color:var(--teal-dk)}
+.umenu{position:fixed;top:59px;right:10px;width:200px;background:var(--card);border-radius:var(--r);box-shadow:var(--shlg);padding:8px;z-index:300;animation:fi .15s;border:1.5px solid var(--border)}
+.umenu-n{padding:9px 11px 8px;font-weight:700;font-size:14px;border-bottom:1px solid var(--border);margin-bottom:5px}
+.umenu-i{padding:9px 11px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s;display:flex;align-items:center;gap:8px}
+.umenu-i:active{background:var(--sand)}
+.umenu-i.danger{color:var(--rust)}
+.toast{position:fixed;top:68px;left:50%;transform:translateX(-50%);background:var(--teal);color:#fff;padding:9px 20px;border-radius:20px;font-size:13px;font-weight:700;z-index:400;box-shadow:0 4px 16px rgba(0,0,0,.2);white-space:nowrap;animation:fi .2s}
+.close-preview{background:var(--sand);border-radius:12px;padding:13px;margin-bottom:15px}
+.cp-row{display:flex;justify-content:space-between;font-size:14px;padding:5px 0}
+.cp-row:not(:last-child){border-bottom:1px solid var(--blt)}
+.cp-tot{display:flex;justify-content:space-between;font-size:15px;font-weight:800;padding-top:8px;border-top:1.5px solid var(--border)}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect}=React;
+const S={get:(k)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const fmt=(n,d=2)=>Number(n||0).toLocaleString("th-TH",{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtDate=(ts)=>new Date(ts).toLocaleDateString("th-TH",{day:"numeric",month:"short",year:"numeric"});
+const CATS=[{id:"food",label:"อาหาร",icon:"🍜"},{id:"transport",label:"เดินทาง",icon:"🚗"},{id:"hotel",label:"ที่พัก",icon:"🏨"},{id:"activity",label:"กิจกรรม",icon:"🎡"},{id:"shopping",label:"ช้อปปิ้ง",icon:"🛍️"},{id:"other",label:"อื่นๆ",icon:"💰"}];
+const EMOJIS=["✈️","🏖️","⛰️","🗼","🎑","🌏","🚢","🏕️","🎿","🌴","🎭","🗺️"];
+function calcSettlements(balances){
+  const cred=balances.filter(b=>b.diff>0.01).map(b=>({...b,rem:b.diff}));
+  const debt=balances.filter(b=>b.diff<-0.01).map(b=>({...b,rem:Math.abs(b.diff)}));
+  const txs=[];let ci=0,di=0;
+  while(ci<cred.length&&di<debt.length){const c=cred[ci],d=debt[di];const amt=Math.min(c.rem,d.rem);if(amt>0.01)txs.push({from:d.name,to:c.name,amount:amt});c.rem-=amt;d.rem-=amt;if(c.rem<0.01)ci++;if(d.rem<0.01)di++;}
+  return txs;
+}
+function App(){
+  const[currentUser,setCurrentUser]=useState(null);
+  const[users,setUsers]=useState([]);
+  const[trips,setTrips]=useState([]);
+  const[screen,setScreen]=useState("home");
+  const[activeTrip,setActiveTrip]=useState(null);
+  const[modal,setModal]=useState(null);
+  const[showUserMenu,setShowUserMenu]=useState(false);
+  const[loading,setLoading]=useState(true);
+  const[authMode,setAuthMode]=useState("login");
+  const[authForm,setAuthForm]=useState({username:"",password:"",displayName:""});
+  const[authError,setAuthError]=useState("");
+  const[tripForm,setTripForm]=useState({name:"",emoji:"✈️",currency:"THB"});
+  const[joinCode,setJoinCode]=useState("");
+  const[expForm,setExpForm]=useState({amount:"",category:"food",note:"",paidBy:""});
+  const[incForm,setIncForm]=useState({amount:"",note:""});
+  const[listTab,setListTab]=useState("expense");
+  const[toast,setToast]=useState("");
+  const[closingTrip,setClosingTrip]=useState(false);
+  useEffect(()=>{
+    const u=S.get("tw_users");const t=S.get("tw_trips");const cu=S.get("tw_cur");
+    if(u)setUsers(u);if(t)setTrips(t);if(cu)setCurrentUser(cu);setLoading(false);
+  },[]);
+  const showToast=(msg)=>{setToast(msg);setTimeout(()=>setToast(""),2500);};
+  const saveUsers=(u)=>{setUsers(u);S.set("tw_users",u);};
+  const saveTrips=(t)=>{setTrips(t);S.set("tw_trips",t);};
+  const liveTrip=activeTrip?trips.find(t=>t.id===activeTrip.id)||activeTrip:null;
+  const totalExp=(t)=>(t.expenses||[]).reduce((s,e)=>s+e.amount,0);
+  const totalInc=(t)=>(t.incomes||[]).reduce((s,i)=>s+i.amount,0);
+  const netTotal=(t)=>totalExp(t)-totalInc(t);
+  const perPerson=(t)=>t.members.length>0?netTotal(t)/t.members.length:0;
+  const memberBals=(t)=>{const pp=perPerson(t);return(t.members||[]).map(m=>{const paid=(t.expenses||[]).filter(e=>e.paidBy===m.id).reduce((s,e)=>s+e.amount,0);return{...m,paid,share:pp,diff:paid-pp};});};
+  const handleAuth=()=>{
+    setAuthError("");const uname=authForm.username.trim().toLowerCase();
+    if(!uname||!authForm.password){setAuthError("กรุณากรอกข้อมูลให้ครบ");return;}
+    if(authMode==="register"){
+      if(users.find(u=>u.username===uname)){setAuthError("ชื่อผู้ใช้นี้มีอยู่แล้ว");return;}
+      const nu={id:uid(),username:uname,password:authForm.password,displayName:authForm.displayName.trim()||uname};
+      const nu2=[...users,nu];saveUsers(nu2);setCurrentUser(nu);S.set("tw_cur",nu);
+    }else{
+      const user=users.find(u=>u.username===uname&&u.password===authForm.password);
+      if(!user){setAuthError("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง");return;}
+      setCurrentUser(user);S.set("tw_cur",user);
+    }
+    setAuthForm({username:"",password:"",displayName:""});
+  };
+  const logout=()=>{setCurrentUser(null);S.set("tw_cur",null);setShowUserMenu(false);setScreen("home");};
+  const createTrip=()=>{
+    if(!tripForm.name.trim())return;
+    const code=Math.random().toString(36).slice(2,8).toUpperCase();
+    const trip={id:uid(),name:tripForm.name.trim(),emoji:tripForm.emoji,currency:tripForm.currency,code,createdAt:Date.now(),creatorId:currentUser.id,members:[{id:currentUser.id,name:currentUser.displayName}],expenses:[],incomes:[],status:"active"};
+    saveTrips([...trips,trip]);setModal(null);setTripForm({name:"",emoji:"✈️",currency:"THB"});setActiveTrip(trip);setScreen("trip");setListTab("expense");
+  };
+  const joinTrip=()=>{
+    const code=joinCode.trim().toUpperCase();const trip=trips.find(t=>t.code===code);
+    if(!trip){showToast("❌ ไม่พบรหัสทริปนี้");return;}
+    if(trip.status==="closed"){showToast("🔒 ทริปนี้ปิดแล้ว");return;}
+    if(trip.members.find(m=>m.id===currentUser.id)){setActiveTrip(trip);setScreen("trip");setModal(null);setJoinCode("");return;}
+    const updated=trips.map(t=>t.id===trip.id?{...t,members:[...t.members,{id:currentUser.id,name:currentUser.displayName}]}:t);
+    saveTrips(updated);setActiveTrip(updated.find(t=>t.id===trip.id));setScreen("trip");setModal(null);setJoinCode("");
+  };
+  const addExpense=()=>{
+    const amt=parseFloat(expForm.amount);if(!amt||amt<=0)return;
+    const paidById=expForm.paidBy||currentUser.id;
+    const expense={id:uid(),amount:amt,category:expForm.category,note:expForm.note.trim()||CATS.find(c=>c.id===expForm.category)?.label,paidBy:paidById,paidByName:liveTrip.members.find(m=>m.id===paidById)?.name||currentUser.displayName,createdAt:Date.now()};
+    const updT={...liveTrip,expenses:[expense,...(liveTrip.expenses||[])]};
+    saveTrips(trips.map(t=>t.id===updT.id?updT:t));setActiveTrip(updT);setModal(null);setExpForm({amount:"",category:"food",note:"",paidBy:""});showToast("✅ บันทึกรายจ่ายแล้ว");
+  };
+  const addIncome=()=>{
+    const amt=parseFloat(incForm.amount);if(!amt||amt<=0)return;
+    const income={id:uid(),amount:amt,note:incForm.note.trim()||"งบกลาง",addedBy:currentUser.id,addedByName:currentUser.displayName,createdAt:Date.now()};
+    const updT={...liveTrip,incomes:[income,...(liveTrip.incomes||[])]};
+    saveTrips(trips.map(t=>t.id===updT.id?updT:t));setActiveTrip(updT);setModal(null);setIncForm({amount:"",note:""});showToast("✅ เพิ่มงบกลางแล้ว");
+  };
+  const deleteExpense=(expId)=>{const updT={...liveTrip,expenses:liveTrip.expenses.filter(e=>e.id!==expId)};saveTrips(trips.map(t=>t.id===updT.id?updT:t));setActiveTrip(updT);showToast("🗑️ ลบรายการแล้ว");};
+  const deleteIncome=(incId)=>{const updT={...liveTrip,incomes:(liveTrip.incomes||[]).filter(i=>i.id!==incId)};saveTrips(trips.map(t=>t.id===updT.id?updT:t));setActiveTrip(updT);showToast("🗑️ ลบงบกลางแล้ว");};
+  const closeTrip=()=>{
+    const t=liveTrip;const balances=memberBals(t);const settlements=calcSettlements(balances);
+    const catSummary=CATS.map(c=>({...c,total:(t.expenses||[]).filter(e=>e.category===c.id).reduce((s,e)=>s+e.amount,0)})).filter(c=>c.total>0);
+    const receipt={generatedAt:Date.now(),generatedBy:currentUser.displayName,totalExpenses:totalExp(t),totalIncome:totalInc(t),netTotal:netTotal(t),perPerson:perPerson(t),memberCount:t.members.length,balances,settlements,catSummary};
+    const updT={...t,status:"closed",closedAt:Date.now(),receipt};
+    saveTrips(trips.map(tr=>tr.id===updT.id?updT:tr));setActiveTrip(updT);setClosingTrip(false);setModal("receipt");showToast("🔒 ปิดทริปและออกใบเสร็จแล้ว");
+  };
+  const shareCode=async(trip)=>{
+    const text=`🌏 ร่วมทริป "${trip.name}" ใน TripWallet!\nรหัสทริป: ${trip.code}`;
+    if(navigator.share){try{await navigator.share({title:"TripWallet",text});return;}catch{}}
+    if(navigator.clipboard){await navigator.clipboard.writeText(text);showToast("📋 คัดลอกรหัสแล้ว!");}
+  };
+  const myTrips=trips.filter(t=>t.members?.find(m=>m.id===currentUser?.id));
+  if(loading)return<div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100dvh",background:"#1d5954",color:"#fff",fontFamily:"Sarabun,sans-serif",flexDirection:"column",gap:"12px"}}><div style={{fontSize:"44px"}}>✈️</div><div style={{fontSize:"16px",fontWeight:"600"}}>กำลังโหลด...</div></div>;
+  if(!currentUser)return(
+    <div className="auth-bg">
+      <div style={{fontSize:"48px",marginBottom:"6px",position:"relative",zIndex:1}}>✈️</div>
+      <div className="auth-logo">Trip<span>Wallet</span></div>
+      <div className="auth-sub">ผู้ช่วยการเงินสำหรับทริปเที่ยว</div>
+      <div className="auth-card">
+        <div className="atabs">
+          <button className={`atab${authMode==="login"?" on":""}`} onClick={()=>{setAuthMode("login");setAuthError("")}}>เข้าสู่ระบบ</button>
+          <button className={`atab${authMode==="register"?" on":""}`} onClick={()=>{setAuthMode("register");setAuthError("")}}>สมัครสมาชิก</button>
+        </div>
+        {authMode==="register"&&<div className="field"><label>ชื่อที่แสดง</label><input placeholder="เช่น น้องแบงค์" value={authForm.displayName} onChange={e=>setAuthForm(p=>({...p,displayName:e.target.value}))}/></div>}
+        <div className="field"><label>ชื่อผู้ใช้</label><input placeholder="username" value={authForm.username} onChange={e=>setAuthForm(p=>({...p,username:e.target.value}))}/></div>
+        <div className="field"><label>รหัสผ่าน</label><input type="password" placeholder="••••••" value={authForm.password} onChange={e=>setAuthForm(p=>({...p,password:e.target.value}))} onKeyDown={e=>e.key==="Enter"&&handleAuth()}/></div>
+        {authError&&<div style={{color:"var(--rust)",fontSize:"13px",marginBottom:"12px",fontWeight:"600"}}>⚠️ {authError}</div>}
+        <button className="btn btn-teal btn-full" onClick={handleAuth}>{authMode==="login"?"เข้าสู่ระบบ":"สมัครสมาชิก"}</button>
+        {users.length>0&&authMode==="login"&&<div style={{marginTop:"14px",paddingTop:"14px",borderTop:"1px solid var(--border)"}}><div style={{fontSize:"10px",fontWeight:"800",color:"var(--muted)",letterSpacing:".6px",textTransform:"uppercase",marginBottom:"8px"}}>บัญชีที่มีอยู่</div><div style={{display:"flex",flexWrap:"wrap",gap:"6px"}}>{users.map(u=><button key={u.id} className="btn btn-ghost btn-sm" onClick={()=>setAuthForm(p=>({...p,username:u.username}))}>{u.displayName}</button>)}</div></div>}
+      </div>
+    </div>
+  );
+  return(
+    <div className="app" onClick={()=>showUserMenu&&setShowUserMenu(false)}>
+      <div className="hdr">
+        {screen==="trip"&&<button className="hdr-back" onClick={()=>setScreen("home")}>←</button>}
+        <div className="hdr-title">{screen==="trip"?`${liveTrip?.emoji} ${liveTrip?.name}`:"TripWallet ✈️"}</div>
+        <div className="hdr-av" onClick={e=>{e.stopPropagation();setShowUserMenu(!showUserMenu)}}>{currentUser.displayName[0].toUpperCase()}</div>
+      </div>
+      {showUserMenu&&<div className="umenu" onClick={e=>e.stopPropagation()}><div className="umenu-n">👤 {currentUser.displayName}</div><div className="umenu-i danger" onClick={logout}>🚪 ออกจากระบบ</div></div>}
+      {toast&&<div className="toast">{toast}</div>}
+      <div className="scroll">
+        {screen==="home"&&<>
+          <div className="hero">
+            <div className="h-greet">สวัสดี 👋</div>
+            <div className="h-name">{currentUser.displayName}</div>
+            <div className="h-grid">
+              <div className="h-stat"><div className="h-lbl">ทริปของฉัน</div><div className="h-val">{myTrips.length}</div><div className="h-sub">ทริปทั้งหมด</div></div>
+              <div className="h-stat"><div className="h-lbl">ยอดรวมสุทธิ</div><div className="h-val">{fmt(myTrips.reduce((s,t)=>s+netTotal(t),0),0)}</div><div className="h-sub">บาท (หักงบกลาง)</div></div>
+            </div>
+          </div>
+          <div className="stitle">ทริปของฉัน</div>
+          {myTrips.length===0?<div className="empty"><div className="empty-ic">🗺️</div><h3>ยังไม่มีทริป</h3><p>สร้างทริปใหม่หรือเข้าร่วมทริปกับเพื่อน</p></div>
+            :myTrips.map(t=><div key={t.id} className={`tc${t.status==="closed"?" closed":""}`} onClick={()=>{setActiveTrip(t);setScreen("trip");setListTab("expense")}}>
+              <div className="tc-top"><div className="tc-icon">{t.emoji}</div><div className="tc-info"><div className="tc-name">{t.name}<span className={`chip ${t.status==="closed"?"ch-grey":"ch-teal"}`}>{t.status==="closed"?"🔒 ปิดแล้ว":"✈️ กำลังเดินทาง"}</span></div><div className="tc-date">{fmtDate(t.createdAt)} · {t.members.length} คน{t.creatorId===currentUser.id?" · 👑":""}</div></div></div>
+              <div className="tc-foot"><div className="tc-meta">🧾 {(t.expenses||[]).length} รายจ่าย{(t.incomes||[]).length>0?` · 💚 ${fmt(totalInc(t),0)}`:""}</div><div className="tc-amt">{fmt(netTotal(t),0)} {t.currency}</div></div>
+            </div>)}
+          <div style={{height:"90px"}}/>
+        </>}
+        {screen==="trip"&&liveTrip&&(()=>{
+          const t=liveTrip;const isCreator=t.creatorId===currentUser.id;
+          const balances=memberBals(t);const settlements=calcSettlements(balances);const myBal=balances.find(b=>b.id===currentUser.id);
+          return<>
+            <div className="codebar"><div className="codebox"><div><div className="code-lbl">รหัสทริป (แชร์ให้เพื่อน)</div><div className="code-val">{t.code}</div></div></div><button className="btn btn-blue btn-sm" onClick={()=>shareCode(t)}>📤 แชร์</button>{t.status==="closed"&&<button className="btn btn-ghost btn-sm" onClick={()=>setModal("receipt")}>🧾 ใบเสร็จ</button>}</div>
+            {t.status==="closed"?<div className="notice n-warn" style={{marginTop:"10px"}}>🔒 ทริปปิดแล้ว · ทุกคนยังดูรายการและใบเสร็จได้</div>:isCreator?<div className="notice n-teal" style={{marginTop:"10px"}}>👑 คุณเป็นผู้สร้าง สามารถปิดทริปและออกใบเสร็จได้</div>:<div className="notice n-teal" style={{marginTop:"10px"}}>💡 ทุกคนเพิ่มรายการและเช็ครายจ่ายได้ตลอด</div>}
+            <div className="sc"><div className="sc-lbl">ยอดสุทธิ (หักงบกลาง)</div><div><span className="sc-val">{fmt(netTotal(t))}</span><span className="sc-cur">{t.currency}</span></div><div className="sc-row"><div className="sc-item"><div className="sc-iv">{fmt(totalExp(t),0)}</div><div className="sc-il">รายจ่ายรวม</div></div><div className="sc-item"><div className="sc-iv" style={{color:"#7eefc0"}}>{fmt(totalInc(t),0)}</div><div className="sc-il">งบกลาง</div></div><div className="sc-item"><div className="sc-iv">{fmt(perPerson(t))}</div><div className="sc-il">ต่อคน ({t.members.length})</div></div></div></div>
+            {isCreator&&t.status==="active"&&<div style={{margin:"0 13px 4px"}}><button className="btn btn-danger btn-full" onClick={()=>setClosingTrip(true)}>🔒 ปิดทริป & ออกใบเสร็จสรุปให้ทุกคน</button></div>}
+            <div className="stitle">สมาชิก ({t.members.length} คน)</div>
+            <div className="mwrap">{t.members.map(m=><div key={m.id} className={`mchip${m.id===currentUser.id?" me":""}`}><div className="mav">{m.name[0]}</div><div className="mname">{m.name}{m.id===currentUser.id?" (ฉัน)":""}{m.id===t.creatorId?" 👑":""}</div></div>)}</div>
+            {t.members.length>1&&<>
+              <div className="stitle">สรุปยอดแต่ละคน</div>
+              {balances.map(b=><div key={b.id} className="bal"><div className="bal-l"><div className="mav" style={{width:32,height:32,fontSize:13}}>{b.name[0]}</div><div><div className="bal-n">{b.name}{b.id===currentUser.id?" 👤":""}</div><div className="bal-s">ส่วนแบ่ง {fmt(b.share)}</div></div></div><div className="bal-r"><div className="bal-p">จ่าย {fmt(b.paid)}</div><div className={b.diff>=0?"bal-pos":"bal-neg"}>{b.diff>=0?`+${fmt(b.diff)} ได้คืน`:`${fmt(Math.abs(b.diff))} ต้องจ่าย`}</div></div></div>)}
+              {myBal&&<div className={`notice ${myBal.diff>=0?"n-success":"n-danger"}`}>{myBal.diff>=0?`💚 คุณได้รับเงินคืน ${fmt(myBal.diff)} ${t.currency}`:`🔴 คุณต้องจ่ายเพิ่ม ${fmt(Math.abs(myBal.diff))} ${t.currency}`}</div>}
+              {settlements.length>0&&<><div className="stitle">วิธีจ่ายเงินคืน</div>{settlements.map((s,i)=><div key={i} className="settle"><span style={{fontWeight:800}}>{s.from}</span><span style={{color:"var(--gold)",fontSize:"18px"}}>→</span><span style={{fontWeight:800}}>{s.to}</span><span style={{marginLeft:"auto",fontWeight:800,color:"#a07820"}}>{fmt(s.amount)} {t.currency}</span></div>)}</>}
+            </>}
+            <div className="stitle">รายการทั้งหมด</div>
+            <div className="tabbar"><button className={`tabbtn${listTab==="expense"?" on":""}`} onClick={()=>setListTab("expense")}>🧾 รายจ่าย ({(t.expenses||[]).length})</button><button className={`tabbtn${listTab==="income"?" on":""}`} onClick={()=>setListTab("income")}>💚 งบกลาง ({(t.incomes||[]).length})</button></div>
+            {listTab==="expense"&&<>{(t.expenses||[]).length===0?<div className="empty" style={{padding:"28px"}}><div className="empty-ic">🧾</div><h3>ยังไม่มีรายจ่าย</h3></div>:(t.expenses||[]).map(e=>{const cat=CATS.find(c=>c.id===e.category);return<div key={e.id} className="expitem"><div className="exp-ic">{cat?.icon||"💰"}</div><div className="exp-bd"><div className="exp-tt">{e.note}</div><div className="exp-mt">{cat?.label} · {fmtDate(e.createdAt)}</div></div><div className="exp-rg"><div className="exp-am">-{fmt(e.amount)}</div><div className="exp-pb">จ่ายโดย {e.paidByName}</div>{e.paidBy===currentUser.id&&t.status==="active"&&<button className="btn btn-xs btn-danger" style={{marginTop:"4px"}} onClick={()=>deleteExpense(e.id)}>ลบ</button>}</div></div>;})}</>}
+            {listTab==="income"&&<>{(t.incomes||[]).length===0?<div className="empty" style={{padding:"28px"}}><div className="empty-ic">💰</div><h3>ยังไม่มีงบกลาง</h3><p>งบกลางหักออกจากยอดรวมก่อนหารต่อคน</p></div>:(t.incomes||[]).map(i=><div key={i.id} className="inc-card"><div className="inc-icon">💚</div><div className="inc-info"><div className="inc-title">{i.note}</div><div className="inc-meta">เพิ่มโดย {i.addedByName} · {fmtDate(i.createdAt)}</div></div><div style={{textAlign:"right",flexShrink:0}}><div className="inc-amt">+{fmt(i.amount)}</div>{i.addedBy===currentUser.id&&t.status==="active"&&<button className="btn btn-xs btn-ghost" style={{marginTop:"4px"}} onClick={()=>deleteIncome(i.id)}>ลบ</button>}</div></div>)}</>}
+            <div style={{height:"100px"}}/>
+          </>;
+        })()}
+      </div>
+      {screen==="home"&&<div className="fab"><button className="fab-btn fab-c" onClick={()=>setModal("createTrip")}>✈️ สร้างทริป</button><button className="fab-btn fab-j" onClick={()=>setModal("joinTrip")}>🔗 เข้าร่วม</button></div>}
+      {screen==="trip"&&liveTrip?.status==="active"&&<div className="fab"><button className="fab-btn fab-e" onClick={()=>{setExpForm({amount:"",category:"food",note:"",paidBy:currentUser.id});setModal("addExpense")}}>➕ เพิ่มรายจ่าย</button><button className="fab-btn fab-i" onClick={()=>{setIncForm({amount:"",note:""});setModal("addIncome")}}>💚 งบกลาง</button></div>}
+
+      {modal==="createTrip"&&<div className="overlay" onClick={()=>setModal(null)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sh-handle"/><div className="sh-title">สร้างทริปใหม่ 🗺️</div><div className="field"><label>ชื่อทริป</label><input placeholder="เช่น เที่ยวเชียงใหม่" value={tripForm.name} onChange={e=>setTripForm(p=>({...p,name:e.target.value}))}/></div><div className="field"><label>ไอคอน</label><div style={{display:"flex",flexWrap:"wrap",gap:"7px"}}>{EMOJIS.map(em=><button key={em} onClick={()=>setTripForm(p=>({...p,emoji:em}))} style={{fontSize:"22px",width:"42px",height:"42px",border:tripForm.emoji===em?"2px solid var(--teal)":"2px solid var(--border)",borderRadius:"10px",background:tripForm.emoji===em?"var(--teal-lt)":"#fff",cursor:"pointer"}}>{em}</button>)}</div></div><div className="field"><label>สกุลเงิน</label><select value={tripForm.currency} onChange={e=>setTripForm(p=>({...p,currency:e.target.value}))}><option value="THB">THB – บาทไทย</option><option value="USD">USD – ดอลลาร์</option><option value="EUR">EUR – ยูโร</option><option value="JPY">JPY – เยน</option><option value="KRW">KRW – วอน</option><option value="SGD">SGD – ดอลลาร์สิงคโปร์</option></select></div><div style={{display:"flex",gap:"9px"}}><button className="btn btn-ghost" style={{flex:1}} onClick={()=>setModal(null)}>ยกเลิก</button><button className="btn btn-teal" style={{flex:1}} onClick={createTrip} disabled={!tripForm.name.trim()}>สร้างทริป</button></div></div></div>}
+
+      {modal==="joinTrip"&&<div className="overlay" onClick={()=>setModal(null)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sh-handle"/><div className="sh-title">เข้าร่วมทริป 🔗</div><div className="field"><label>รหัสทริป 6 ตัว</label><input placeholder="ABC123" value={joinCode} onChange={e=>setJoinCode(e.target.value.toUpperCase())} style={{letterSpacing:"4px",fontSize:"24px",fontWeight:"800",textAlign:"center"}}/></div><p style={{fontSize:"13px",color:"var(--muted)",marginBottom:"16px",lineHeight:"1.7"}}>ขอรหัสจากเพื่อนที่สร้างทริป</p><div style={{display:"flex",gap:"9px"}}><button className="btn btn-ghost" style={{flex:1}} onClick={()=>setModal(null)}>ยกเลิก</button><button className="btn btn-gold" style={{flex:1}} onClick={joinTrip} disabled={joinCode.length<4}>เข้าร่วม</button></div></div></div>}
+
+      {modal==="addExpense"&&liveTrip&&<div className="overlay" onClick={()=>setModal(null)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sh-handle"/><div className="sh-title">เพิ่มรายจ่าย 🧾</div><div className="field"><label>จำนวนเงิน ({liveTrip.currency})</label><input type="number" placeholder="0.00" inputMode="decimal" value={expForm.amount} onChange={e=>setExpForm(p=>({...p,amount:e.target.value}))} style={{fontSize:"28px",fontWeight:"800",textAlign:"center",color:"var(--rust)"}}/></div><div className="field"><label>หมวดหมู่</label><div className="catgrid">{CATS.map(c=><div key={c.id} className={`catbtn${expForm.category===c.id?" on":""}`} onClick={()=>setExpForm(p=>({...p,category:c.id}))}><div className="catbtn-ic">{c.icon}</div><div className="catbtn-lb">{c.label}</div></div>)}</div></div><div className="field"><label>รายละเอียด</label><input placeholder="เช่น ข้าวผัดกุ้ง, ค่าแท็กซี่..." value={expForm.note} onChange={e=>setExpForm(p=>({...p,note:e.target.value}))}/></div>{liveTrip.members.length>1&&<div className="field"><label>ผู้จ่าย</label><select value={expForm.paidBy||currentUser.id} onChange={e=>setExpForm(p=>({...p,paidBy:e.target.value}))}>{liveTrip.members.map(m=><option key={m.id} value={m.id}>{m.name}{m.id===currentUser.id?" (ฉัน)":""}</option>)}</select></div>}<div style={{display:"flex",gap:"9px"}}><button className="btn btn-ghost" style={{flex:1}} onClick={()=>setModal(null)}>ยกเลิก</button><button className="btn btn-teal" style={{flex:2}} onClick={addExpense} disabled={!expForm.amount||parseFloat(expForm.amount)<=0}>บันทึกรายจ่าย</button></div></div></div>}
+
+      {modal==="addIncome"&&liveTrip&&<div className="overlay" onClick={()=>setModal(null)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sh-handle"/><div className="sh-title">เพิ่มงบกลาง 💚</div><div className="notice n-teal" style={{marginBottom:"14px",marginLeft:0,marginRight:0}}>งบกลางจะหักออกจากยอดรวมก่อนคำนวณหารต่อคน</div><div className="field"><label>จำนวนงบกลาง ({liveTrip.currency})</label><input type="number" placeholder="0.00" inputMode="decimal" value={incForm.amount} onChange={e=>setIncForm(p=>({...p,amount:e.target.value}))} style={{fontSize:"28px",fontWeight:"800",textAlign:"center",color:"var(--green)"}}/></div><div className="field"><label>รายละเอียด</label><input placeholder="เช่น เงินกลุ่ม, งบสนับสนุน..." value={incForm.note} onChange={e=>setIncForm(p=>({...p,note:e.target.value}))}/></div><div style={{display:"flex",gap:"9px"}}><button className="btn btn-ghost" style={{flex:1}} onClick={()=>setModal(null)}>ยกเลิก</button><button className="btn btn-green" style={{flex:2}} onClick={addIncome} disabled={!incForm.amount||parseFloat(incForm.amount)<=0}>เพิ่มงบกลาง</button></div></div></div>}
+
+      {closingTrip&&liveTrip&&<div className="overlay" onClick={()=>setClosingTrip(false)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sh-handle"/><div className="sh-title">ปิดทริป & ออกใบเสร็จ 🔒</div><div className="notice n-warn" style={{marginBottom:"14px",marginLeft:0,marginRight:0}}>⚠️ เมื่อปิดแล้วจะไม่สามารถเพิ่มรายการใหม่ได้ แต่ทุกคนยังดูรายการและใบเสร็จได้ตลอด</div><div className="close-preview"><div style={{fontSize:"11px",fontWeight:"800",color:"var(--muted)",letterSpacing:".6px",textTransform:"uppercase",marginBottom:"10px"}}>ตรวจสอบก่อนปิด</div><div className="cp-row"><span>รายจ่ายรวม</span><span style={{fontWeight:800}}>{fmt(totalExp(liveTrip))} {liveTrip.currency}</span></div>{totalInc(liveTrip)>0&&<div className="cp-row"><span>งบกลาง</span><span style={{fontWeight:800,color:"var(--green)"}}>-{fmt(totalInc(liveTrip))} {liveTrip.currency}</span></div>}<div className="cp-row"><span>สมาชิก</span><span style={{fontWeight:800}}>{liveTrip.members.length} คน</span></div><div className="cp-tot"><span>ต่อคน</span><span style={{color:"var(--teal)"}}>{fmt(perPerson(liveTrip))} {liveTrip.currency}</span></div></div><div style={{display:"flex",gap:"9px"}}><button className="btn btn-ghost" style={{flex:1}} onClick={()=>setClosingTrip(false)}>ยกเลิก</button><button className="btn btn-danger" style={{flex:2}} onClick={closeTrip}>🔒 ยืนยันปิดทริป</button></div></div></div>}
+
+      {modal==="receipt"&&liveTrip?.receipt&&<div className="overlay" onClick={()=>setModal(null)}><div className="sheet" onClick={e=>e.stopPropagation()}><div className="sh-handle"/><div className="sh-title">ใบเสร็จสรุปทริป 🧾</div><div className="rcpt"><div className="rcpt-hdr"><div style={{fontSize:"34px",marginBottom:"5px"}}>{liveTrip.emoji}</div><div className="rcpt-t">{liveTrip.name}</div><div className="rcpt-m">{fmtDate(liveTrip.createdAt)} — {fmtDate(liveTrip.closedAt)}</div><div className="rcpt-m">{liveTrip.members.length} คน · สรุปโดย {liveTrip.receipt.generatedBy}</div></div><div className="rcpt-sec"><div className="rcpt-stitle">💰 สรุปการเงิน</div><div className="rcpt-row"><span className="rcpt-rl">รายจ่ายรวม</span><span className="rcpt-rv">{fmt(liveTrip.receipt.totalExpenses)} {liveTrip.currency}</span></div>{liveTrip.receipt.totalIncome>0&&<div className="rcpt-row"><span className="rcpt-rl">งบกลาง (หัก)</span><span className="rcpt-rv" style={{color:"var(--green)"}}>-{fmt(liveTrip.receipt.totalIncome)} {liveTrip.currency}</span></div>}<div className="rcpt-tot"><span>ยอดสุทธิ</span><span>{fmt(liveTrip.receipt.netTotal)} {liveTrip.currency}</span></div><div className="rcpt-row" style={{paddingTop:"6px"}}><span className="rcpt-rl">ต่อคน ({liveTrip.receipt.memberCount} คน)</span><span style={{fontWeight:800,color:"var(--teal)",fontSize:"16px"}}>{fmt(liveTrip.receipt.perPerson)} {liveTrip.currency}</span></div></div>{liveTrip.receipt.catSummary.length>0&&<div className="rcpt-sec"><div className="rcpt-stitle">📊 รายจ่ายตามหมวดหมู่</div>{liveTrip.receipt.catSummary.map(c=><div key={c.id} className="rcpt-row"><span className="rcpt-rl">{c.icon} {c.label}</span><span className="rcpt-rv">{fmt(c.total)} {liveTrip.currency}</span></div>)}</div>}<div className="rcpt-sec"><div className="rcpt-stitle">👥 สรุปรายบุคคล</div>{liveTrip.receipt.balances.map(b=><div key={b.id} style={{padding:"8px 0",borderBottom:"1px solid var(--blt)"}}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"3px"}}><span style={{fontWeight:700,fontSize:"14px"}}>{b.name}{b.id===currentUser.id?" 👤":""}</span><span style={{fontSize:"13px",fontWeight:800,color:b.diff>=0?"var(--green)":"var(--rust)"}}>{b.diff>=0?`+${fmt(b.diff)} ได้คืน`:`${fmt(Math.abs(b.diff))} ต้องจ่าย`}</span></div><div style={{display:"flex",justifyContent:"space-between",fontSize:"11px",color:"var(--muted)"}}><span>จ่ายจริง {fmt(b.paid)}</span><span>ส่วนแบ่ง {fmt(b.share)}</span></div></div>)}</div><div className="rcpt-sec"><div className="rcpt-stitle">💸 วิธีจ่ายเงินคืน</div>{liveTrip.receipt.settlements.length===0?<div style={{textAlign:"center",padding:"10px 0",color:"var(--green)",fontWeight:"700",fontSize:"14px"}}>✅ ไม่มียอดค้างชำระ!</div>:liveTrip.receipt.settlements.map((s,i)=><div key={i} style={{display:"flex",alignItems:"center",gap:"7px",padding:"8px 0",borderBottom:"1px solid var(--blt)",fontSize:"13px"}}><span style={{fontWeight:800}}>{s.from}</span><span style={{color:"var(--gold)",fontSize:"16px"}}>→</span><span style={{fontWeight:800}}>{s.to}</span><span style={{marginLeft:"auto",fontWeight:800,color:"var(--teal)",fontSize:"14px"}}>{fmt(s.amount)} {liveTrip.currency}</span></div>)}</div></div><button className="btn btn-ghost btn-full" onClick={()=>setModal(null)}>ปิด</button></div></div>}
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
